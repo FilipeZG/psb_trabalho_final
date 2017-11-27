@@ -8,16 +8,24 @@ struct candidato
     char partido[20];
 };
 
+struct voto 
+{
+    int numero;
+    char nome[20];
+};
+
 void incluir();
 void listar();
 void listarTodos();
+void listarTodosVotos();
 void alterar();
 void excluir();
 void procurar();
 
 char contiuar();
 
-char fnome[] = {"principal.dat"};
+char fCandidatos[] = {"principal.dat"};
+char fUrna[] = {"urna.dat"};
 
 int main() 
 {
@@ -38,6 +46,7 @@ int main()
     printf("| 4. Procurar                                           |\n");
     printf("| 5. Listar Candidato                                   |\n");
     printf("| 6. Listar Todos                                       |\n");
+    printf("| 7. Listar Todos Votos                                 |\n");
     printf("| 0. Sair                                               |\n");
     printf("|                                                       |\n");
     printf("+-------------------------------------------------------+\n");
@@ -71,6 +80,10 @@ int main()
       listarTodos();
       break;
 
+    case 7:
+      listarTodosVotos();
+      break;
+
     case 0:
       continua = 0;
     }
@@ -85,7 +98,7 @@ void incluir()
   FILE * fp;
   struct candidato t1;
 
-  fp = fopen(fnome, "ab");
+  fp = fopen(fCandidatos, "ab");
 
   printf("\nInforme o Número: ");
   scanf("%d", &t1.numero);
@@ -108,7 +121,7 @@ void alterar()
   struct candidato t, t1;
   int numero, found = 0, count = 0;
 
-  fp = fopen(fnome, "rb");
+  fp = fopen(fCandidatos, "rb");
   fp1 = fopen("temp.dat", "wb");
 
   printf("\nInforme o número do candidato que deseja modificar: ");
@@ -153,7 +166,7 @@ void alterar()
   } 
   else 
   {
-    fp = fopen(fnome, "wb");
+    fp = fopen(fCandidatos, "wb");
     fp1 = fopen("temp.dat", "rb");
 
     while (1) 
@@ -179,7 +192,7 @@ void excluir()
   struct candidato t, t1;
   int numero, found = 0, count = 0;
 
-  fp = fopen(fnome, "rb");
+  fp = fopen(fCandidatos, "rb");
   fp1 = fopen("temp.dat", "wb");
 
   printf("\nInforme Número do candidato que deseja excluir: ");
@@ -213,7 +226,7 @@ void excluir()
   } 
   else 
   {
-    fp = fopen(fnome, "wb");
+    fp = fopen(fCandidatos, "wb");
     fp1 = fopen("temp.dat", "rb");
 
     while(1) 
@@ -241,14 +254,14 @@ void listar()
   struct candidato t;
   int numero, found = 0;
 
-  fp = fopen(fnome, "rb");
+  fp = fopen(fCandidatos, "rb");
 
   printf("\nInforme Número do candidato: ");
   scanf("%d", & numero);
 
   while (1) 
   {
-    fread( & t, sizeof(t), 1, fp);
+    fread( &t, sizeof(t), 1, fp);
 
     if ( feof(fp) )
     {
@@ -285,7 +298,7 @@ void procurar()
   int found = 0;
   char nome[20];
 
-  fp = fopen(fnome, "rb");
+  fp = fopen(fCandidatos, "rb");
 
   printf("\nInforme nome do candidato:");
   scanf("%s", nome);
@@ -328,7 +341,7 @@ void listarTodos()
   FILE * fp;
   struct candidato t;
 
-  fp = fopen(fnome, "rb");
+  fp = fopen(fCandidatos, "rb");
 
   printf("\n========================================================\n");
   printf("\t\t Listagem de Candidatos\n");
@@ -353,6 +366,69 @@ void listarTodos()
   printf("========================================================\n\n");
 
   fclose(fp);
+}
+
+void listarTodosVotos() 
+{
+  FILE * fp;
+  struct voto v;
+
+  fp = fopen(fUrna, "rb");
+
+  printf("\n========================================================\n");
+  printf("\t\t Listagem de Votos\n");
+  printf("========================================================\n");
+          
+  printf("Número\tNome\t\n");
+  printf("--------------------------------------------------------\n");
+
+  while (1) 
+  {
+    fread( &v, sizeof(v), 1, fp);
+
+    if ( feof(fp) )
+    {
+      break;
+    }
+
+    printf("%d\t", v.numero);
+    printf("%s\t", v.nome);
+
+  }
+  
+  printf("\n========================================================\n\n");
+
+  fclose(fp);
+}
+
+int votosCandidato(int numero) 
+{
+  int count = 0;
+  FILE * fp;
+  struct voto v;
+
+
+  fp = fopen(fUrna, "rb");
+
+  while (1) 
+  {
+    fread( &v, sizeof(v), 1, fp);
+
+    if ( feof(fp) )
+    {
+      break;
+    }
+
+    if (v.numero == numero) 
+    {
+      count++;
+    }
+
+  }
+
+  fclose(fp);
+
+  return count;
 }
 
 char contiuar() 
