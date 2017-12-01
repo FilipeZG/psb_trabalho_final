@@ -16,11 +16,12 @@ struct voto
 
 void incluir();
 void listar();
-void listarTodos();
+void listarTodos(int);
 void listarTodosVotos();
 void alterar();
 void excluir();
 void procurar();
+int votosCandidato(int);
 
 char contiuar();
 
@@ -47,6 +48,7 @@ int main()
     printf("| 5. Listar Candidato                                   |\n");
     printf("| 6. Listar Todos                                       |\n");
     printf("| 7. Listar Todos Votos                                 |\n");
+    printf("| 8. Candidatos e Votos                                 |\n");
     printf("| 0. Sair                                               |\n");
     printf("|                                                       |\n");
     printf("+-------------------------------------------------------+\n");
@@ -77,12 +79,17 @@ int main()
       break;
 
     case 6:
-      listarTodos();
+      listarTodos(0);
       break;
 
     case 7:
       listarTodosVotos();
       break;
+
+    case 8:
+      listarTodos(1);
+      break;
+
 
     case 0:
       continua = 0;
@@ -336,10 +343,11 @@ void procurar()
   fclose(fp);
 }
 
-void listarTodos() 
+void listarTodos(int voto) 
 {
   FILE * fp;
   struct candidato t;
+  int countVoto = 0;
 
   fp = fopen(fCandidatos, "rb");
 
@@ -347,8 +355,14 @@ void listarTodos()
   printf("\t\t Listagem de Candidatos\n");
   printf("========================================================\n");
           
-  printf("Número\tNome\tPartido\n");
-  printf("--------------------------------------------------------\n");
+  printf("Número\t\tNome\t\tPartido");
+
+  if (voto) 
+  {
+    printf("\t\tVotos");
+  }
+
+  printf("\n--------------------------------------------------------\n");
 
   while (1) 
   {
@@ -358,12 +372,26 @@ void listarTodos()
     {
       break;
     }
-    printf("%d\t", t.numero);
-    printf("%s\t", t.nome);
-    printf("%s\t\n", t.partido);
 
+    if (voto) 
+    {
+      countVoto = votosCandidato(t.numero);
+    }
+
+    printf("%d\t\t", t.numero);
+    printf("%s\t\t", t.nome);
+    printf("%s\t\t", t.partido);
+
+    if (voto) 
+    {
+      printf("%d\t\t", countVoto);
+    }
+
+    printf("\n");
+
+    countVoto = 0;
   }
-  printf("========================================================\n\n");
+  printf("\n========================================================\n\n");
 
   fclose(fp);
 }
@@ -421,6 +449,7 @@ int votosCandidato(int numero)
 
     if (v.numero == numero) 
     {
+
       count++;
     }
 
